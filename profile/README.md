@@ -82,10 +82,6 @@ embryo of [great web](https://cyb.ai/ipfs/QmUamt7diQP54eRnmzqMZNEtXNTzbgkQvZuBsg
 - [telegram channel](https://t.me/bostrom_news)
 - [discord server](https://discord.gg/cyber-bostrom-spacepussy)
 
-## partnerships
-- [deep foundation](https://github.com/deep-foundation)
-- let's make partnerships!
-
 ## ai docs
 - [go-cyber](https://wiki.mutable.ai/cybercongress/go-cyber)
 - [cyb-ts](https://wiki.mutable.ai/cybercongress/cyb-ts)

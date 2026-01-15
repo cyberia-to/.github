@@ -1,0 +1,138 @@
+name: Publish to Netlify
+
+on:
+  workflow_call:
+    inputs:
+      graph-path:
+        description: 'Path to Logseq graph'
+        required: false
+        default: '.'
+        type: string
+      output-path:
+        description: 'Output directory'
+        required: false
+        default: 'public'
+        type: string
+      site-name:
+        description: 'Site name for meta tags'
+        required: false
+        default: 'docs'
+        type: string
+      plausible-script:
+        description: 'Plausible analytics script URL'
+        required: false
+        default: ''
+        type: string
+    secrets:
+      PINATA_JWT:
+        required: true
+      PINATA_GATEWAY:
+        required: true
+      NETLIFY_AUTH_TOKEN:
+        required: true
+      NETLIFY_SITE_ID:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Publish with Quartz
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Upload local images to Pinata
+        env:
+          PINATA_JWT: ${{ secrets.PINATA_JWT }}
+          PINATA_GATEWAY: ${{ secrets.PINATA_GATEWAY }}
+        run: |
+          # Find local image references in markdown (not already IPFS)
+          grep -rohE '\((\.\./)?assets/[^)]+\.(png|jpg|jpeg|gif|webp|svg)\)' pages/ 2>/dev/null | \
+            tr -d '()' | sed 's|^\.\./||' | sort -u > /tmp/images.txt || true
+
+          [ ! -s /tmp/images.txt ] && echo "No local images found" && exit 0
+
+          echo "Found $(wc -l < /tmp/images.txt) images to upload"
+
+          upload_image() {
+            FILE_PATH="$1"
+            [ ! -f "$FILE_PATH" ] && echo "⚠ Not found: $FILE_PATH" && return
+
+            RESPONSE=$(curl -s -X POST "https://uploads.pinata.cloud/v3/files" \
+              -H "Authorization: Bearer $PINATA_JWT" \
+              -F "file=@$FILE_PATH" \
+              -F "network=public")
+
+            CID=$(echo "$RESPONSE" | jq -r '.data.cid // empty')
+
+            if [ -n "$CID" ]; then
+              echo "$(basename "$FILE_PATH")|https://$PINATA_GATEWAY/ipfs/$CID" >> /tmp/mappings.txt
+              echo "✓ $FILE_PATH"
+            else
+              echo "✗ $FILE_PATH"
+            fi
+          }
+          export -f upload_image
+          export PINATA_JWT PINATA_GATEWAY
+
+          cat /tmp/images.txt | xargs -P 10 -I {} bash -c 'upload_image "$@"' _ {}
+
+          if [ -f /tmp/mappings.txt ]; then
+            echo "Building replacement script..."
+            while IFS='|' read -r BASENAME IPFS_URL; do
+              echo "s|(\.\./assets/$BASENAME)|($IPFS_URL)|g"
+              echo "s|(assets/$BASENAME)|($IPFS_URL)|g"
+            done < /tmp/mappings.txt > /tmp/sed_script.txt
+
+            echo "Updating $(wc -l < /tmp/mappings.txt) references in markdown..."
+            find pages/ -name "*.md" -exec sed -i -f /tmp/sed_script.txt {} +
+            echo "✓ Done"
+          fi
+
+      - name: Build site
+        uses: cyberia-to/publish-quartz@v0.3.3
+        with:
+          graph-path: ${{ inputs.graph-path }}
+          output-path: ${{ inputs.output-path }}
+
+      - name: Add nojekyll file
+        run: touch ${{ inputs.output-path }}/.nojekyll
+
+      - name: Copy logo
+        run: |
+          mkdir -p ${{ inputs.output-path }}/static/img
+          cp assets/logo.png ${{ inputs.output-path }}/static/img/logo.png 2>/dev/null || true
+
+      - name: Add meta tags and analytics
+        env:
+          BUILD_DIR: ${{ inputs.output-path }}
+          SITE_NAME: ${{ inputs.site-name }}
+          PLAUSIBLE_SCRIPT: ${{ inputs.plausible-script }}
+        run: |
+          METAS="<meta property=\"og:title\" content=\"$SITE_NAME\">
+          <meta name=\"description\" content=\"$SITE_NAME\">
+          <meta property=\"og:description\" content=\"$SITE_NAME\">
+          <meta property=\"og:image\" content=\"/static/img/logo.png\">"
+
+          if [ -n "$PLAUSIBLE_SCRIPT" ]; then
+            METAS="$METAS
+          <script async src=\"$PLAUSIBLE_SCRIPT\"></script>
+          <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>"
+          fi
+
+          find "$BUILD_DIR" -name "*.html" | while read -r file; do
+            sed -i "/<\/head>/i\\
+          $(echo "$METAS" | sed 's/$/\\n/' | tr -d '\n')\\
+          " "$file"
+          done
+          echo "Added meta tags to all HTML files"
+
+      - name: Deploy to Netlify
+        run: |
+          npm install -g netlify-cli
+          netlify deploy --prod --dir=${{ inputs.output-path }} --message="Deployed with publish-quartz"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

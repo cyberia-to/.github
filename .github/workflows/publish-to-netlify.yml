@@ -111,21 +111,13 @@ jobs:
           SITE_NAME: ${{ inputs.site-name }}
           PLAUSIBLE_DOMAIN: ${{ inputs.plausible-domain }}
         run: |
-          METAS="<meta property=\"og:title\" content=\"$SITE_NAME\">
-          <meta name=\"description\" content=\"$SITE_NAME\">
-          <meta property=\"og:description\" content=\"$SITE_NAME\">
-          <meta property=\"og:image\" content=\"/static/img/logo.png\">"
+          METAS="<meta property=\"og:title\" content=\"$SITE_NAME\"><meta name=\"description\" content=\"$SITE_NAME\"><meta property=\"og:description\" content=\"$SITE_NAME\"><meta property=\"og:image\" content=\"/static/img/logo.png\">"
 
           if [ -n "$PLAUSIBLE_DOMAIN" ]; then
-            METAS="$METAS
-          <script defer data-domain=\"$PLAUSIBLE_DOMAIN\" src=\"https://plausible.io/js/script.js\"></script>"
+            METAS="$METAS<script defer data-domain=\"$PLAUSIBLE_DOMAIN\" src=\"https://plausible.io/js/script.js\"></script>"
           fi
 
-          find "$BUILD_DIR" -name "*.html" | while read -r file; do
-            sed -i "/<\/head>/i\\
-          $(echo "$METAS" | sed 's/$/\\n/' | tr -d '\n')\\
-          " "$file"
-          done
+          find "$BUILD_DIR" -name "*.html" -exec sed -i "s|</head>|${METAS}</head>|" {} +
           echo "Added meta tags to all HTML files"
 
       - name: Deploy to Netlify

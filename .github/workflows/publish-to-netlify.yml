@@ -18,8 +18,8 @@ on:
         required: false
         default: 'docs'
         type: string
-      plausible-script:
-        description: 'Plausible analytics script URL'
+      plausible-domain:
+        description: 'Domain for Plausible analytics (e.g. cv.land)'
         required: false
         default: ''
         type: string
@@ -109,17 +109,16 @@ jobs:
         env:
           BUILD_DIR: ${{ inputs.output-path }}
           SITE_NAME: ${{ inputs.site-name }}
-          PLAUSIBLE_SCRIPT: ${{ inputs.plausible-script }}
+          PLAUSIBLE_DOMAIN: ${{ inputs.plausible-domain }}
         run: |
           METAS="<meta property=\"og:title\" content=\"$SITE_NAME\">
           <meta name=\"description\" content=\"$SITE_NAME\">
           <meta property=\"og:description\" content=\"$SITE_NAME\">
           <meta property=\"og:image\" content=\"/static/img/logo.png\">"
 
-          if [ -n "$PLAUSIBLE_SCRIPT" ]; then
+          if [ -n "$PLAUSIBLE_DOMAIN" ]; then
             METAS="$METAS
-          <script async src=\"$PLAUSIBLE_SCRIPT\"></script>
-          <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>"
+          <script defer data-domain=\"$PLAUSIBLE_DOMAIN\" src=\"https://plausible.io/js/script.js\"></script>"
           fi
 
           find "$BUILD_DIR" -name "*.html" | while read -r file; do

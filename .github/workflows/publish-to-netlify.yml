@@ -114,7 +114,7 @@ jobs:
             METAS="$METAS<script async src=\"https://plausible.io/js/${PLAUSIBLE_SCRIPT_ID}.js\"></script><script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>"
           fi
 
-          find "$BUILD_DIR" -name "*.html" -exec sed -i "s|</head>|${METAS}</head>|" {} +
+          find "$BUILD_DIR" -name "*.html" -exec sed -i "s#</head>#${METAS}</head>#" {} +
           echo "Added meta tags to all HTML files"
 
       - name: Deploy to Netlify

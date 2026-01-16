@@ -18,11 +18,6 @@ on:
         required: false
         default: 'docs'
         type: string
-      plausible-domain:
-        description: 'Domain for Plausible analytics (e.g. cv.land)'
-        required: false
-        default: ''
-        type: string
     secrets:
       PINATA_JWT:
         required: true
@@ -32,6 +27,8 @@ on:
         required: true
       NETLIFY_SITE_ID:
         required: true
+      PLAUSIBLE_SCRIPT_ID:
+        required: false
 
 jobs:
   build:
@@ -109,12 +106,12 @@ jobs:
         env:
           BUILD_DIR: ${{ inputs.output-path }}
           SITE_NAME: ${{ inputs.site-name }}
-          PLAUSIBLE_DOMAIN: ${{ inputs.plausible-domain }}
+          PLAUSIBLE_SCRIPT_ID: ${{ secrets.PLAUSIBLE_SCRIPT_ID }}
         run: |
           METAS="<meta property=\"og:title\" content=\"$SITE_NAME\"><meta name=\"description\" content=\"$SITE_NAME\"><meta property=\"og:description\" content=\"$SITE_NAME\"><meta property=\"og:image\" content=\"/static/img/logo.png\">"
 
-          if [ -n "$PLAUSIBLE_DOMAIN" ]; then
-            METAS="$METAS<script defer data-domain=\"$PLAUSIBLE_DOMAIN\" src=\"https://plausible.io/js/script.js\"></script>"
+          if [ -n "$PLAUSIBLE_SCRIPT_ID" ]; then
+            METAS="$METAS<script async src=\"https://plausible.io/js/${PLAUSIBLE_SCRIPT_ID}.js\"></script><script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>"
           fi
 
           find "$BUILD_DIR" -name "*.html" -exec sed -i "s|</head>|${METAS}</head>|" {} +

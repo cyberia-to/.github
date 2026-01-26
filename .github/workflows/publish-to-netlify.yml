@@ -18,6 +18,18 @@ on:
         required: false
         default: 'docs'
         type: string
+      home:
+        description: 'Override home page'
+        required: false
+        type: string
+      title:
+        description: 'Override site title'
+        required: false
+        type: string
+      favorites:
+        description: 'Comma-separated favorites list'
+        required: false
+        type: string
     secrets:
       PINATA_JWT:
         required: true
@@ -89,10 +101,14 @@ jobs:
           fi
 
       - name: Build site
-        uses: cyberia-to/publish-quartz@v0.3.9
+        uses: cyberia-to/publish-quartz@v0.3.11
         with:
           graph-path: ${{ inputs.graph-path }}
           output-path: ${{ inputs.output-path }}
+          home: ${{ inputs.home }}
+          title: ${{ inputs.title }}
+          favorites: ${{ inputs.favorites }}
+          site-name: ${{ inputs.site-name }}
 
       - name: Add nojekyll file
         run: touch ${{ inputs.output-path }}/.nojekyll

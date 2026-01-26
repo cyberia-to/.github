@@ -30,6 +30,11 @@ on:
         description: 'Comma-separated favorites list'
         required: false
         type: string
+      environment:
+        description: 'GitHub Environment name for secrets'
+        required: false
+        default: ''
+        type: string
     secrets:
       PINATA_JWT:
         required: true
@@ -46,6 +51,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Publish with Quartz
+    environment: ${{ inputs.environment }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4

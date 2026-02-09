@@ -131,7 +131,9 @@ jobs:
         run: |
           if [ -n "$PLAUSIBLE_SCRIPT_ID" ]; then
             SCRIPT="<script async src=\"https://plausible.io/js/${PLAUSIBLE_SCRIPT_ID}.js\"></script><script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>"
-            find "$BUILD_DIR" -name "*.html" -exec sed -i "s#</head>#${SCRIPT}</head>#" {} +
+            find "$BUILD_DIR" -name "*.html" | while read -r file; do
+              sed -i "s#</head>#${SCRIPT}</head>#" "$file"
+            done
             echo "Added analytics to all HTML files"
           else
             echo "No analytics configured, skipping"

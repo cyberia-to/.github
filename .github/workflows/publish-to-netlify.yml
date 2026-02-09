@@ -35,6 +35,10 @@ on:
         required: false
         default: ''
         type: string
+      base-url:
+        description: 'Base URL for the site (e.g., cyber.page)'
+        required: false
+        type: string
     secrets:
       PINATA_JWT:
         required: true
@@ -123,6 +127,18 @@ jobs:
         run: |
           mkdir -p ${{ inputs.output-path }}/static/img
           cp assets/logo.png ${{ inputs.output-path }}/static/img/logo.png 2>/dev/null || true
+
+      - name: Fix base URL in meta tags
+        if: ${{ inputs.base-url != '' }}
+        env:
+          BUILD_DIR: ${{ inputs.output-path }}
+          BASE_URL: ${{ inputs.base-url }}
+        run: |
+          echo "Updating og:image URLs to use $BASE_URL"
+          find "$BUILD_DIR" -name "*.html" | while read -r file; do
+            sed -i "s#https://cyberia-to.github.io/publish-quartz#https://$BASE_URL#g" "$file"
+          done
+          echo "Updated meta tags with correct base URL"
 
       - name: Add analytics
         env:

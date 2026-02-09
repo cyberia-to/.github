@@ -107,7 +107,7 @@ jobs:
           fi
 
       - name: Build site
-        uses: cyberia-to/publish-quartz@v0.3.11
+        uses: cyberia-to/publish-quartz@v0.3.12
         with:
           graph-path: ${{ inputs.graph-path }}
           output-path: ${{ inputs.output-path }}

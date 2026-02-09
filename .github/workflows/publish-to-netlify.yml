@@ -124,27 +124,17 @@ jobs:
           mkdir -p ${{ inputs.output-path }}/static/img
           cp assets/logo.png ${{ inputs.output-path }}/static/img/logo.png 2>/dev/null || true
 
-      - name: Add meta tags and analytics
+      - name: Add analytics
         env:
           BUILD_DIR: ${{ inputs.output-path }}
-          SITE_NAME: ${{ inputs.site-name }}
           PLAUSIBLE_SCRIPT_ID: ${{ secrets.PLAUSIBLE_SCRIPT_ID }}
         run: |
-          # Replace existing og:image tags with custom logo
-          find "$BUILD_DIR" -name "*.html" -exec sed -i \
-            -e 's#<meta property="og:image" content="[^"]*">#<meta property="og:image" content="/static/img/logo.png">#g' \
-            -e 's#<meta property="og:image:url" content="[^"]*">#<meta property="og:image:url" content="/static/img/logo.png">#g' \
-            -e 's#<meta name="twitter:image" content="[^"]*">#<meta name="twitter:image" content="/static/img/logo.png">#g' \
-            {} +
-
-          # Add site-specific meta tags
-          METAS="<meta property=\"og:site_name\" content=\"$SITE_NAME\">"
+          # Add analytics if configured (og:image is handled by Quartz CustomOgImages plugin)
           if [ -n "$PLAUSIBLE_SCRIPT_ID" ]; then
-            METAS="$METAS<script async src=\"https://plausible.io/js/${PLAUSIBLE_SCRIPT_ID}.js\"></script><script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>"
+            SCRIPT="<script async src=\"https://plausible.io/js/${PLAUSIBLE_SCRIPT_ID}.js\"></script><script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>"
+            find "$BUILD_DIR" -name "*.html" -exec sed -i "s#</head>#${SCRIPT}</head>#" {} +
+            echo "Added analytics to all HTML files"
           fi
-
-          find "$BUILD_DIR" -name "*.html" -exec sed -i "s#</head>#${METAS}</head>#" {} +
-          echo "Updated meta tags in all HTML files"
 
       - name: Deploy to Netlify
         run: |

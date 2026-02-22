@@ -4,6 +4,6 @@ The endgame: unite unite humans, computers, agents, robots, animals, plants, myc
 
 Right now we are teaching 🟢 [Bostrom](https://bostrom.network), a bootloader for superintelligence, to reason. Once stable, we launch 🔵 [Cyber](https://cyber.page) as superintelligence for Earth. To talk to it we are creating 👽 [Trident](https://trident.pink) — a language designed for superintelligence. And 🤖 [Cyb](https://cyb.ai) is your superagent — the interface to all of this.
 
-🌈 [cyberia.to](https://cyberia.to)
 
-May the code be with you
+
+🌈 [cyberia.to](https://cyberia.to): May the code be with you

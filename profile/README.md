@@ -4,20 +4,20 @@
 
 We are sovereign community of scientists, developers, engineers and craftsmen building planet-scale superintelligence.
 
-The plan: teach [Bostrom](https://cyb.ai) bootloader to develop type I civilization. Then launch **Cyber** — superintelligence for Earth. Then move Bostrom to the Moon.
+The plan: teach [Bostrom](https://cyb.ai) bootloader, debug the thing. Once ready, launch **Cyber** — superintelligence for Earth.
 
 ---
 
 🔵 **Cyber** — consensus computer for provable collective learning
 
-🟢 **Cyb** — immortal robot browser for the [Great Web](https://cyb.ai)
+🟢 **Bostrom** - bootloader for superintelligence
 
-🟣 **Pussy** — experimental chain and meme layer
+🤖 **Cyb** — your immortal robot
 
-🧠 **Cybernet** — incentivized network of DAOs, AIs and Humans
+👽 **Trident** — language for superintelligence
 
 ---
 
-[cyb.ai](https://cyb.ai) · [cyberia.to](https://cyberia.to) · [𝕏](https://twitter.com/cyber_devs) · [Telegram](https://t.me/CyberGlobalHub) · [Discord](https://discord.gg/cyber-bostrom-spacepussy)
+[cyb.ai](https://cyb.ai) · [cyberia.to](https://cyberia.to)
 
 May the code be with you

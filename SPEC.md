@@ -1,9 +1,5 @@
 # Org Workspace: `.github` as Workspace Root, Sync as the Engine
 
-Status: draft
-Target location after adoption: `cyberia-to/.github/SPEC.md`
-Supersedes: the `.claude/plans/subgraph-integration.md` build-time model (still valid; this spec moves the org-awareness layer out of the content repo)
-
 ## One-sentence goal
 
 Every contributor gets the full cyberia-to workspace from a single clone and a single command, with identical ergonomics for external and internal contributors, while keeping content repos, the build tool, and the workspace machinery each responsible for exactly one thing.

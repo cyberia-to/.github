@@ -1,0 +1,19 @@
+# cyberia-to workspace configuration
+# read by scripts/sync-org.nu and scripts/build.nu
+# see SPEC.md for the reconciliation model
+
+org      = "cyberia-to"
+root_dir = "~/cyberia-to"
+
+[graph]
+root_subgraph = "cyber"          # donates the root namespace
+output        = "build"
+
+[subgraphs.policy]
+clone_archived  = false          # archived repos are skipped on clone
+include_private = true           # private repos included in local builds
+public_flag     = "--public-only"
+
+[sync]
+lock_file       = "subgraphs.lock.toml"
+default_action  = "dry-run"      # mutations require --apply

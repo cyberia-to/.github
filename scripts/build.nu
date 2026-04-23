@@ -22,6 +22,7 @@ def main [
         {
             name: $d.name,
             path: ($root_dir | path join $d.repo),
+            visibility: ($d.visibility? | default "public"),
         }
     })
 

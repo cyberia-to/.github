@@ -17,7 +17,7 @@ def main [
 
     let decls = (load-declarations $ws_root)
     let filtered = (filter-decls $decls $public_only)
-    let subgraphs = ($filtered | each {|d| {name: $d.name, path: ($root_dir | path join $d.repo)}})
+    let subgraphs = ($filtered | each {|d| {name: $d.name, path: ($root_dir | path join $d.repo), visibility: ($d.visibility? | default "public")}})
 
     let config_path = "/tmp/optica-subgraphs.toml"
     ({subgraphs: $subgraphs} | to toml) | save --force $config_path

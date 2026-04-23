@@ -1,6 +1,6 @@
 #!/usr/bin/env nu
 # sync-org.nu — reconcile GitHub org state with local filesystem and declarations
-# dry-run only for session 1: computes and prints the plan, never mutates
+# dry-run by default; --apply executes non-destructive transitions
 # see SPEC.md for the full state machine
 
 use std/log
@@ -8,13 +8,13 @@ use std/log
 # ---------- entry point ----------
 
 def main [
-    --apply                # apply non-destructive transitions (not yet implemented)
+    --apply                # apply non-destructive transitions
     --apply-renames        # apply rename plans (not yet implemented)
     --json                 # machine-readable plan output
     --only: string         # scope to one repo
 ] {
-    if $apply or $apply_renames {
-        print "--apply is not yet implemented in session 1; running dry-run"
+    if $apply_renames {
+        print "--apply-renames not yet implemented; ignoring"
     }
 
     let ws_root = (workspace-root)
@@ -26,13 +26,38 @@ def main [
 
     let plan = (compute-plan $ws $lock $decls $org_state $fs_state $only)
 
-    if $json {
+    if $json and not $apply {
         print ($plan | to json)
-    } else {
-        print-plan $plan $ws
+        exit (plan-exit-code $plan)
     }
 
-    exit (plan-exit-code $plan)
+    print-plan $plan $ws
+
+    let shadow = ($plan.transitions | where event == "shadow-conflict" | length)
+    if $shadow > 0 {
+        print "halt: shadow conflicts detected; resolve before --apply"
+        exit 10
+    }
+
+    if not $apply {
+        let muts = (actionable-transitions $plan.transitions)
+        if ($muts | length) == 0 {
+            exit 0
+        } else {
+            print "dry-run complete. re-run with --apply to execute"
+            exit 1
+        }
+    }
+
+    print "applying..."
+    let new_lock = (apply-plan $plan $ws $org_state $lock $ws_root)
+    write-lock $"($ws_root)/($ws.sync.lock_file)" $new_lock
+    print "applied. lock file updated."
+    exit 2
+}
+
+def actionable-transitions [transitions] {
+    $transitions | where event not-in ["noop" "fetch" "workspace-self" "archived-skip"]
 }
 
 # ---------- workspace loading ----------
@@ -68,30 +93,15 @@ def load-declarations [root: string] {
     if ($files | length) == 0 { return [] }
     $files | each {|f|
         let parsed = (parse-declaration $f)
-        $parsed | upsert _path $f
+        $parsed | merge {_path: $f}
     }
 }
 
 def parse-declaration [path: string] {
     let raw = (open --raw $path)
-    let fm = (extract-frontmatter $raw)
-    $fm
-}
-
-def extract-frontmatter [raw: string] {
-    let lines = ($raw | lines)
-    if ($lines | length) < 2 or ($lines | get 0) != "---" {
-        return {}
-    }
-    let end_idx = ($lines
-        | enumerate
-        | skip 1
-        | where item == "---"
-        | get index
-        | first)
-    if $end_idx == null { return {} }
-    let yaml_lines = ($lines | skip 1 | first $end_idx)
-    $yaml_lines | str join "\n" | from yaml
+    let split = (split-frontmatter $raw)
+    if $split.frontmatter == null { return {} }
+    try { $split.frontmatter | from yaml } catch { {} }
 }
 
 # ---------- github org state ----------
@@ -296,7 +306,6 @@ def print-plan [plan, ws] {
         print "plan: no transitions needed (clean)"
     } else {
         print $"plan: ($muts | length) transitions pending review"
-        print "dry-run complete. re-run with --apply to execute (session 1: not yet implemented)"
     }
 }
 
@@ -306,4 +315,195 @@ def plan-exit-code [plan] {
 
     let muts = ($plan.transitions | where event not-in ["noop" "fetch" "workspace-self" "archived-skip"])
     if ($muts | length) == 0 { 0 } else { 1 }
+}
+
+# ---------- apply ----------
+
+def apply-plan [plan, ws, org_state, lock, ws_root: string] {
+    let root_dir = ($ws.root_dir | path expand)
+    let subgraphs_dir = $"($ws_root)/subgraphs"
+
+    mut repo_locks = ($lock.repos? | default {})
+
+    for t in $plan.transitions {
+        match $t.event {
+            "add" => {
+                let name = $t.repo
+                let org_repo = ($org_state | get $name)
+                apply-clone $name $org_repo $root_dir
+                apply-write-stub $name $org_repo $subgraphs_dir
+                $repo_locks = ($repo_locks | upsert $name (lock-entry $org_repo))
+            }
+            "add-clone" => {
+                let name = $t.repo
+                let org_repo = ($org_state | get $name)
+                apply-clone $name $org_repo $root_dir
+                apply-reconcile-decl $name $org_repo $subgraphs_dir
+                $repo_locks = ($repo_locks | upsert $name (lock-entry $org_repo))
+            }
+            "adopt" => {
+                let name = $t.repo
+                let org_repo = ($org_state | get $name)
+                apply-write-stub $name $org_repo $subgraphs_dir
+                $repo_locks = ($repo_locks | upsert $name (lock-entry $org_repo))
+            }
+            "fetch" => {
+                let name = $t.repo
+                let org_repo = ($org_state | get $name)
+                apply-fetch $name $root_dir
+                $repo_locks = ($repo_locks | upsert $name (lock-entry $org_repo))
+            }
+            "archive" | "archive-drift" => {
+                let name = $t.repo
+                let org_repo = ($org_state | get $name)
+                apply-reconcile-decl $name $org_repo $subgraphs_dir
+                $repo_locks = ($repo_locks | upsert $name (lock-entry $org_repo))
+            }
+            "visibility-flip" => {
+                let name = $t.repo
+                let org_repo = ($org_state | get $name)
+                apply-reconcile-decl $name $org_repo $subgraphs_dir
+                $repo_locks = ($repo_locks | upsert $name (lock-entry $org_repo))
+            }
+            "archived-skip" | "workspace-self" | "noop" => {
+                print $"skip: ($t.repo) (($t.event))"
+            }
+            "shadow-conflict" => {
+                print $"halt: shadow conflict on ($t.repo); should have exited earlier"
+            }
+            "foreign-or-rename" => {
+                print $"skip: ($t.repo) (foreign or rename, needs --apply-renames)"
+            }
+            _ => {
+                print $"skip: ($t.repo) unknown event ($t.event)"
+            }
+        }
+    }
+
+    {
+        schema: 1
+        org: $ws.org
+        synced_at: (date now | format date "%Y-%m-%dT%H:%M:%SZ")
+        repos: $repo_locks
+    }
+}
+
+def apply-clone [name: string, org_repo, root_dir: string] {
+    let dest = $"($root_dir)/($name)"
+    if ($dest | path exists) {
+        print $"  already present: ($name)"
+        return
+    }
+    let url = $org_repo.clone_url
+    print $"  clone ($name) → ($dest)"
+    ^git clone --quiet $url $dest
+}
+
+def apply-fetch [name: string, root_dir: string] {
+    let path = $"($root_dir)/($name)"
+    if not ($path | path exists) {
+        print $"  skip fetch: ($name) not cloned"
+        return
+    }
+    print $"  fetch ($name)"
+    do { ^git -C $path fetch --all --quiet --prune } | complete | ignore
+}
+
+def apply-write-stub [name: string, org_repo, subgraphs_dir: string] {
+    let path = $"($subgraphs_dir)/($name).md"
+    if ($path | path exists) {
+        apply-reconcile-decl $name $org_repo $subgraphs_dir
+        return
+    }
+    print $"  write declaration: subgraphs/($name).md"
+    let vis = $org_repo.visibility
+    let arch = ($org_repo.archived | into string)
+    let content = [
+        "---"
+        $"name: ($name)"
+        $"repo: ($name)"
+        $"visibility: ($vis)"
+        $"archived: ($arch)"
+        "---"
+        ""
+        $"# ($name)"
+        ""
+        "<!-- auto-generated stub. replace freely with human-written context. -->"
+    ] | str join "\n"
+    $content | save --force $path
+}
+
+def apply-reconcile-decl [name: string, org_repo, subgraphs_dir: string] {
+    let path = $"($subgraphs_dir)/($name).md"
+    if not ($path | path exists) {
+        apply-write-stub $name $org_repo $subgraphs_dir
+        return
+    }
+    let raw = (open --raw $path)
+    let split = (split-frontmatter $raw)
+    if $split.frontmatter == null {
+        print $"  skip: ($path) has no frontmatter"
+        return
+    }
+    mut fm = $split.frontmatter
+    $fm = (ensure-yaml-key $fm "visibility" $org_repo.visibility)
+    $fm = (ensure-yaml-key $fm "archived" ($org_repo.archived | into string))
+    let rebuilt = $"---\n($fm)\n---\n($split.body)"
+    if $rebuilt != $raw {
+        print $"  reconcile declaration: subgraphs/($name).md"
+        $rebuilt | save --force $path
+    }
+}
+
+def split-frontmatter [raw: string] {
+    let lines = ($raw | lines)
+    if ($lines | length) < 2 or ($lines | get 0) != "---" {
+        return {frontmatter: null, body: $raw}
+    }
+    let end_idx = ($lines
+        | enumerate
+        | skip 1
+        | where item == "---"
+        | get index
+        | first)
+    if $end_idx == null { return {frontmatter: null, body: $raw} }
+    let fm_lines = ($lines | skip 1 | take ($end_idx - 1))
+    let body_lines = ($lines | skip ($end_idx + 1))
+    {
+        frontmatter: ($fm_lines | str join "\n")
+        body: ($body_lines | str join "\n")
+    }
+}
+
+def ensure-yaml-key [yaml_text: string, key: string, value: string] {
+    let lines = ($yaml_text | lines)
+    let has_key = ($lines | any {|l|
+        let trimmed = ($l | str trim)
+        ($trimmed | str starts-with $"($key):")
+    })
+    if $has_key {
+        $lines | each {|line|
+            let trimmed = ($line | str trim)
+            if ($trimmed | str starts-with $"($key):") {
+                $"($key): ($value)"
+            } else {
+                $line
+            }
+        } | str join "\n"
+    } else {
+        ($lines ++ [$"($key): ($value)"]) | str join "\n"
+    }
+}
+
+def lock-entry [org_repo] {
+    {
+        visibility: $org_repo.visibility
+        archived: $org_repo.archived
+        default_branch: $org_repo.default_branch
+        last_seen: (date now | format date "%Y-%m-%dT%H:%M:%SZ")
+    }
+}
+
+def write-lock [path: string, data] {
+    $data | to toml | save --force $path
 }

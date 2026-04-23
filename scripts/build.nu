@@ -14,9 +14,10 @@ def main [
     let ws = (open $"($ws_root)/workspace.toml")
     let root_dir = ($ws.root_dir | path expand)
     let root_graph = ($root_dir | path join $ws.graph.root_subgraph)
+    let root_name = $ws.graph.root_subgraph
 
     let decls = (load-declarations $ws_root)
-    let filtered = (filter-decls $decls $public_only)
+    let filtered = (filter-decls $decls $public_only $root_name)
 
     let subgraphs = ($filtered | each {|d|
         {
@@ -45,8 +46,19 @@ def main [
     print $"config: ($config_path)"
     print ""
 
-    let out = if $output == null { $ws.graph.output } else { $output }
+    let out = (resolve-output $ws_root $ws.graph.output $output)
     ^$optica_bin build $root_graph --output $out --subgraphs $config_path
+}
+
+def resolve-output [ws_root: string, ws_output: string, cli_override] {
+    # Build output is a workspace concern; relative paths resolve against
+    # the workspace root, never against the content-repo graph root.
+    let raw = if $cli_override == null { $ws_output } else { $cli_override }
+    if ($raw | str starts-with "/") {
+        $raw
+    } else {
+        $ws_root | path join $raw
+    }
 }
 
 def workspace-root [] {
@@ -96,11 +108,15 @@ def split-frontmatter [raw: string] {
     }
 }
 
-def filter-decls [decls, public_only: bool] {
+def filter-decls [decls, public_only: bool, root_name: string] {
+    # .github is included as a subgraph — per SPEC.md open question 2, the
+    # workspace repo is self-describing. Only the root-subgraph entry and
+    # archived/orphan decls are excluded. Visibility and local-only are
+    # honored for public-only builds.
     $decls
         | where ($it.archived? | default false) != true
         | where ($it.orphan? | default false) != true
-        | where ($it.name? | default "") != ".github"       # workspace self does not publish
+        | where ($it.name? | default "") != $root_name
         | where {|d|
             if not $public_only {
                 true

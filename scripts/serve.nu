@@ -5,6 +5,7 @@
 
 def main [
     --public-only              # exclude private + local-only subgraphs
+    --output: path             # override output directory
     --port: int = 8888         # server port
     --bind: string = "127.0.0.1"
     --open                     # open browser on start
@@ -15,8 +16,9 @@ def main [
     let root_dir = ($ws.root_dir | path expand)
     let root_graph = ($root_dir | path join $ws.graph.root_subgraph)
 
+    let root_name = $ws.graph.root_subgraph
     let decls = (load-declarations $ws_root)
-    let filtered = (filter-decls $decls $public_only)
+    let filtered = (filter-decls $decls $public_only $root_name)
     let subgraphs = ($filtered | each {|d| {name: $d.name, path: ($root_dir | path join $d.repo), visibility: ($d.visibility? | default "public")}})
 
     let config_path = "/tmp/optica-subgraphs.toml"
@@ -31,10 +33,22 @@ def main [
         error make {msg: $"optica binary not found at ($optica_bin)"}
     }
 
+    let out = (resolve-output $ws_root $ws.graph.output $output)
+
     print $"serving ($root_graph) with ($subgraphs | length) subgraphs at http://($bind):($port)"
+    print $"output: ($out)"
 
     let open_args = if $open { ["--open"] } else { [] }
-    ^$optica_bin serve $root_graph --subgraphs $config_path --port $port --bind $bind ...$open_args
+    ^$optica_bin serve $root_graph --output $out --subgraphs $config_path --port $port --bind $bind ...$open_args
+}
+
+def resolve-output [ws_root: string, ws_output: string, cli_override] {
+    let raw = if $cli_override == null { $ws_output } else { $cli_override }
+    if ($raw | str starts-with "/") {
+        $raw
+    } else {
+        $ws_root | path join $raw
+    }
 }
 
 def workspace-root [] {
@@ -81,11 +95,11 @@ def split-frontmatter [raw: string] {
     {frontmatter: ($fm_lines | str join "\n"), body: ($body_lines | str join "\n")}
 }
 
-def filter-decls [decls, public_only: bool] {
+def filter-decls [decls, public_only: bool, root_name: string] {
     $decls
         | where ($it.archived? | default false) != true
         | where ($it.orphan? | default false) != true
-        | where ($it.name? | default "") != ".github"
+        | where ($it.name? | default "") != $root_name
         | where {|d|
             if not $public_only {
                 true

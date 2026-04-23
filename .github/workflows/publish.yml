@@ -19,7 +19,6 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    environment: cyber
     steps:
       - name: Checkout workspace into ~/cyberia-to/.github
         env:

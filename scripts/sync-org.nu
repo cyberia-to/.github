@@ -94,7 +94,7 @@ def load-declarations [root: string] {
     $files | each {|f|
         let parsed = (parse-declaration $f)
         $parsed | merge {_path: $f}
-    }
+    } | where ($it.name? | is-not-empty)
 }
 
 def parse-declaration [path: string] {
@@ -125,8 +125,9 @@ def scan-filesystem [root: string] {
     if not ($root | path exists) {
         return {}
     }
-    ls $root
+    ls --all $root
         | where type == dir
+        | where ($it.name | path basename) not-in [".", ".."]
         | reduce --fold {} {|it, acc|
             let name = ($it.name | path basename)
             let classification = (classify-folder $it.name)
@@ -184,11 +185,6 @@ def compute-plan [ws, lock, decls, org_state, fs_state, only] {
 }
 
 def classify-transition [name, org_repo, fs_entry, decl, lock_entry, policy] {
-    # skip the .github repo itself — it is the workspace anchor, not a subgraph to clone
-    if $name == ".github" {
-        return {repo: $name, event: "workspace-self", detail: "this repo is the workspace root"}
-    }
-
     # archived handling
     if $org_repo.archived {
         if $fs_entry == null {

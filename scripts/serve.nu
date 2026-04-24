@@ -39,7 +39,19 @@ def main [
     print $"output: ($out)"
 
     let open_args = if $open { ["--open"] } else { [] }
-    ^$optica_bin serve $root_graph --output $out --subgraphs $config_path --port $port --bind $bind ...$open_args
+    let ipfs_args = (ipfs-args $ws_root $ws)
+    ^$optica_bin serve $root_graph --output $out --subgraphs $config_path --port $port --bind $bind ...$open_args ...$ipfs_args
+}
+
+def ipfs-args [ws_root: string, ws] {
+    let map_rel = ($ws.media?.ipfs_map? | default "ipfs-cache.json")
+    let map_path = if ($map_rel | str starts-with "/") { $map_rel } else { $ws_root | path join $map_rel }
+    if ($map_path | path exists) {
+        let gateway = ($ws.media?.ipfs_gateway? | default "https://gateway.pinata.cloud")
+        ["--ipfs-map" $map_path "--ipfs-gateway" $gateway]
+    } else {
+        []
+    }
 }
 
 def resolve-output [ws_root: string, ws_output: string, cli_override] {

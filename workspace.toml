@@ -18,7 +18,10 @@ public_flag     = "--public-only"
 # Gateway prefix for IPFS-hosted media. Optica rewrites
 # `../media/<filename>` in markdown to `<ipfs_gateway>/ipfs/<CID>`
 # at build time using the filename→CID map below.
-ipfs_gateway    = "https://emerald-raw-leopon-384.mypinata.cloud"
+# Using the public gateway — the dedicated `emerald-raw-leopon-384`
+# gateway has access controls enabled and returns 401 from browsers.
+# Switch back once those allow cyber.page + localhost origins.
+ipfs_gateway    = "https://gateway.pinata.cloud"
 ipfs_map        = "ipfs-cache.json"   # relative to workspace root
 
 [sync]

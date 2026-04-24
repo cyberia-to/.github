@@ -105,6 +105,36 @@ jobs:
           CACHE_FILE="/tmp/ipfs-cache.json"
           [ -f "$CACHE_FILE" ] || echo '{}' > "$CACHE_FILE"
 
+          # Hydrate cache from Pinata's pin list when empty — on this
+          # workflow's first run (or after a cache scope migration) the
+          # images live only on Pinata and can't be re-uploaded from a
+          # repo that no longer tracks them. Walk all pins and index by
+          # filename for subsequent resolution.
+          CACHED_COUNT=$(jq 'length' "$CACHE_FILE")
+          if [ "$CACHED_COUNT" = "0" ] && [ -n "$PINATA_JWT" ]; then
+            echo "Cache cold — hydrating from Pinata..."
+            OFFSET=0
+            TMP_HYDRATE=/tmp/pinata-all.json
+            echo '{}' > "$TMP_HYDRATE"
+            while true; do
+              RESP=$(curl -s -G "https://api.pinata.cloud/data/pinList" \
+                -H "Authorization: Bearer $PINATA_JWT" \
+                --data-urlencode "status=pinned" \
+                --data-urlencode "pageLimit=1000" \
+                --data-urlencode "pageOffset=$OFFSET")
+              ROWS=$(echo "$RESP" | jq '.rows | length')
+              [ "$ROWS" = "null" ] && break
+              [ "$ROWS" = "0" ] && break
+              # Merge this page's filename→cid pairs into the hydrate buffer.
+              echo "$RESP" | jq '[.rows[] | select(.metadata.name != null) | {(.metadata.name): .ipfs_pin_hash}] | add // {}' \
+                | jq -s '.[0] * .[1]' "$TMP_HYDRATE" - > /tmp/tmp.json && mv /tmp/tmp.json "$TMP_HYDRATE"
+              OFFSET=$((OFFSET + ROWS))
+              [ "$ROWS" -lt 1000 ] && break
+            done
+            mv "$TMP_HYDRATE" "$CACHE_FILE"
+            echo "Hydrated $(jq 'length' "$CACHE_FILE") CIDs from Pinata"
+          fi
+
           ROOT_GRAPH="$HOME/cyberia-to/cyber"
           [ -d "$ROOT_GRAPH/root" ] || { echo "no root/ in $ROOT_GRAPH, skipping media resolve"; exit 0; }
 
@@ -112,6 +142,8 @@ jobs:
           [ -z "$FILENAMES" ] && { echo "no media references"; exit 0; }
 
           SED_SCRIPT=""
+          RESOLVED=0
+          MISSING=0
           while IFS= read -r filename; do
             [ -z "$filename" ] && continue
             CID=$(jq -r --arg f "$filename" '.[$f] // empty' "$CACHE_FILE")
@@ -122,10 +154,15 @@ jobs:
               CID=$(echo "$RESP" | jq -r '.IpfsHash // empty')
               [ -n "$CID" ] && jq --arg f "$filename" --arg c "$CID" '. + {($f): $c}' "$CACHE_FILE" > /tmp/tmp.json && mv /tmp/tmp.json "$CACHE_FILE"
             fi
-            [ -z "$CID" ] && continue
+            if [ -z "$CID" ]; then
+              MISSING=$((MISSING + 1))
+              continue
+            fi
+            RESOLVED=$((RESOLVED + 1))
             SED_SCRIPT="${SED_SCRIPT}s|\.\./media/${filename}|${GATEWAY}/ipfs/${CID}|g;"
           done <<< "$FILENAMES"
 
+          echo "IPFS resolution: $RESOLVED resolved, $MISSING missing"
           if [ -n "$SED_SCRIPT" ]; then
             find "$ROOT_GRAPH/root" -name '*.md' -exec sed -i "$SED_SCRIPT" {} +
             echo "Rewrote media URLs using $GATEWAY"

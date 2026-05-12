@@ -27,12 +27,18 @@ jobs:
           mkdir -p "$HOME/cyberia-to"
           git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" "$HOME/cyberia-to/.github"
 
+      - name: Checkout root graph (cyber)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/cyberia-to/cyber.git" "$HOME/cyberia-to/cyber"
+
       - name: Checkout declared subgraphs
         env:
           GH_TOKEN: ${{ github.token }}
           ORG: cyberia-to
         run: |
-          cd "$HOME/cyberia-to/.github"
+          cd "$HOME/cyberia-to/cyber"
           for decl in subgraphs/*.md; do
             [ -f "$decl" ] || continue
             NAME=$(awk '/^name:/ {print $2; exit}' "$decl")

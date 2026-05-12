@@ -89,7 +89,7 @@ jobs:
 
       - name: Build site
         run: |
-          cd "$HOME/cyberia-to/.github"
+          cd "$HOME/cyberia-to/cyber"
           nu scripts/build.nu --public-only \
             --optica "$HOME/cyberia-to/optica/target/release/optica" \
             --output "$HOME/cyberia-to/.github/build"

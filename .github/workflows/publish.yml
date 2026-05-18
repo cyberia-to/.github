@@ -4,9 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'subgraphs/**'
-      - 'scripts/**'
-      - 'workspace.toml'
+      - 'profile/**'
       - '.github/workflows/publish.yml'
   repository_dispatch:
     types: [content-changed]

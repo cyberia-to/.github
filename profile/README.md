@@ -1,9 +1,9 @@
-We are building 🔵 [Cyber](https://cyber.page) — the earth singleton for provable collective intelligence. The endgame: unite humans, computers, agents, robots, animals, plants, mycelium and more into one coherent mind.
+We are building [Cyberia](https://cyberia.to) — earth's cyberstate, led by Superintelligence.
 
-Right now we are teaching 🟢 [Bostrom](https://bostrom.network) to reason — a bootloader that will grow into 🔵 [Cyber](https://cyber.page). 
+The destination is a Type 1 civilization: a species that captures and steers its own energy and attention. The path there goes through a planet that thinks — every being contributing to a shared, verifiable map of what matters.
 
-We are creating 👽 [Trident](https://trident.pink) — a weapon to supercharge it.
+[Cyber](https://cyber.page) is that map. Content-addressed particles. Signed cyberlinks. A provable attention distribution that emerges from every interaction.
 
-And the army of 🤖 [Cyb](https://cyb.ai) — the superagents to fight and win.
+[Cyb](https://cyb.ai) is where you enter. Agents navigating the graph, executing collective will, closing the loop.
 
-🌈 [cyberia.to](https://cyberia.to): May the code be with you
+🌈 [cyberia.to](https://cyberia.to) — may the code be with you

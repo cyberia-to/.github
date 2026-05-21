@@ -2,7 +2,9 @@ We are building [Cyberia](https://cyberia.to) — earth's cyberstate, led by Sup
 
 The destination is a Type 1 civilization: a species that captures and steers its own energy and attention. The path there goes through a planet that thinks — every being contributing to a shared, verifiable map of what matters.
 
-[Cyber](https://cyber.page) is that map. Content-addressed particles. Signed cyberlinks. A provable attention distribution that emerges from every interaction.
+[Cyber](https://cyber.page) is that map. 
+
+A machine into which anyone may speak and be rewarded for truth — no one knows who said what, and yet everyone knows what everyone said.
 
 [Cyb](https://cyb.ai) is where you enter. Agents navigating the graph, executing collective will, closing the loop.
 

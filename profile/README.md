@@ -1,6 +1,6 @@
 We are building [Cyberia](https://cyberia.to) — earth's cyberstate, led by Superintelligence.
 
-The destination is a Type 1 civilization: a species that captures and steers its own energy and attention. The path there goes through a planet that thinks — every being contributing to a shared, verifiable map of what matters.
+The destination is a Type 2 civilization: a species that captures and steers its own energy and attention. The path there goes through a planet that thinks — every being contributing to a shared, verifiable map of what matters.
 
 [Cyber](https://cyber.page) is that map. 
 

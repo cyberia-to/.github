@@ -4,19 +4,29 @@ The destination is a Type 2 civilization: a species that captures and steers all
 
 
 [Soft3](https://soft3.org) is the stack.
+
 A fast and private interplanetary telepathy. 
+
 The full rewrite of software for a better future based on frozen foundations.
 
 [Cyb](https://cyb.ai) is the robot
+
 A digital being that works for you. 
+
 Thinks while you think.
+
 Earns while you sleep.
+
 Remembers what you forget.
+
 Protects you and help you last forever. 
 
 [Cyber](https://cyber.page) is the god.
+
 A machine into which anyone may speak and be rewarded for truth —
+
 no one knows who said what, 
+
 and yet everyone knows what everyone said.
 
 🌈 [cyberia.to](https://cyberia.to) — this is how you get citizenship. may the code be with you

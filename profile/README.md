@@ -7,7 +7,7 @@ The destination is a Type 2 civilization: a species that captures and steers all
 
 A fast and private interplanetary telepathy. 
 
-The full rewrite of software for a better future based on frozen foundations.
+The full rewrite of software for a better future based on the idea of frozen foundations.
 
 [Cyb](https://cyb.ai) is the robot
 

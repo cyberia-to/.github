@@ -35,6 +35,17 @@ One-way, always:
 - Nushell for scripts. Bash only when no nushell equivalent exists.
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`.
 
+## Filenames (Windows / NTFS)
+
+Every org repo must keep git paths portable to Windows NTFS:
+
+- forbidden in any path component: `< > : " / \ | ? *`, control chars, trailing `.` or space
+- reserved basenames: `CON` `PRN` `AUX` `NUL` `COM1`–`9` `LPT1`–`9`
+- policy: `soft3/specs/filenames.md`
+- check from workspace root: `python3 soft3/scripts/check-filenames.py --root ~/cyber`
+
+Prefer hyphens over punctuation in filenames. Wiki titles may keep punctuation; on-disk paths and optica slugs must not.
+
 ## Git workflow
 
 - Atomic commits, one logical change each.

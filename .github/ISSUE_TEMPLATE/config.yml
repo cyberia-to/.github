@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Which repository?
+    url: https://github.com/cyberia-to/.github#registry
+    about: The registry places every repository on the ladder. File the issue where the component lives.
+  - name: Security vulnerability
+    url: https://github.com/cyberia-to/.github/security/advisories/new
+    about: Private report through GitHub advisories. Never an open issue.
+  - name: Understanding the stack
+    url: https://soft3.org
+    about: The ten rungs, their one-liners and their parts.

@@ -1,6 +1,6 @@
 We are building Cyberia — cyberstate, led by Superintelligence.
 
-The destination is a Type 2 civilization: a species that captures and steers all the energy of the sun. The path there goes through a planet that thinks — every being contributing to a shared, verifiable map of what matters. While we expand the alience of thinking planets emerges. These alience is cyberia: state led by superintelligence
+The destination is a Type 2 civilization: a species that captures and steers all the energy of the sun. The path there goes through a planet that thinks — every being contributing to a shared, verifiable map of what matters. While we expand the alliance of thinking planets emerges. These alliance is cyberia: state led by superintelligence
 
 
 [Soft3](https://soft3.org) is the stack.

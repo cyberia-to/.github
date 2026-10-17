@@ -1,0 +1,74 @@
+# registry groups — where a repository sits when the soft3 ladder does not place it.
+#
+# The ladder comes first: soft3/release/components.toml (origin/main) places every
+# component on one of ten rungs, and a repository that carries a component takes
+# that rung. This file covers the rest of the organization and a few corrections.
+#
+# [rung]   repo → product name on the ladder, for repositories that carry a
+#          component under a different name or that the ladder file has not
+#          caught up with.
+# [[group]] a named shelf outside the ladder, in display order. `line` is the
+#          one sentence under the heading; `repos` the members.
+#
+# A repository that matches nothing lands under "unsorted" in the rendered
+# registry and is reported by `nu registry/registry.nu lint`. That is the
+# signal to add it here or to components.toml.
+
+[rung]
+plumb = "cybergraph"      # carries the tok crate; the repo kept its old name
+cyber = "cyber"           # the protocol pages; the ladder names true-cyber as the crate
+ctx = "cyber"             # superintelligent context, the cyber namespace
+blog = "cyberia"          # the chronicle; the ladder still says repo = cyberia-blog
+cx = "cyberia"            # the century index; the ladder lists it under repo = cyberia
+uhash = "cyber"           # universal hash, the democratic proof of work
+"soft3.js" = "soft3"      # the javascript face of the stack
+cybernode = "cyberia"     # ops for the state
+
+[[group]]
+name = "warriors"
+line = "the computing army: miners and provers for every chain worth the electricity"
+repos = [
+  "warriors", "erga", "bita", "mona", "nika", "trisha", "xena", "zoya", "quanta",
+  "gaw", "tolya", "pearla", "zenda", "vitalina", "perla",
+]
+
+[[group]]
+name = "languages"
+line = "seeds of the neural dialects: one repository per way of speaking"
+repos = ["arc", "bt", "ren", "dif", "sym", "bel", "seq", "wav", "ten", "qu", "opt", "sec"]
+
+[[group]]
+name = "cyberia"
+line = "the state beyond the ladder: capital, membership, the presidency and the pages"
+repos = [
+  "cyberia-to", "cyberia.to", "cyberia.my", "my", "mimi", "midao", "cyberia-capital", "cyberia-meme",
+  "cybland", "superhuman",
+]
+
+[[group]]
+name = "land"
+line = "the genesis city and its species, soil and buildings"
+repos = ["cybervalley", "cybervalley-io", "cloud-forest", "oxytocin", "organiq"]
+
+[[group]]
+name = "rockets"
+line = "the family layer: formation, clan and the tools that keep a house"
+repos = ["rockets", "valkyra", "endeka", "maker"]
+
+[[group]]
+name = "cybics"
+line = "mother science and the crystal: the world at large, written down"
+repos = ["cybics", "crystal", "simulation"]
+
+[[group]]
+name = "bootloader"
+line = "what carried the idea before soft3: the chains, the sdk, the vehicles"
+repos = [
+  "bootloader", "go-cyber", "chaingear", "aos", "episode-1", "portal", "hub", "li",
+  "cybernet", "pure",
+]
+
+[[group]]
+name = "org"
+line = "the organization itself"
+repos = [".github"]

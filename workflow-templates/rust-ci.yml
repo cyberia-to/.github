@@ -1,0 +1,32 @@
+name: CI
+
+# Starter for a Rust repository of cyberia-to. Zero warnings, green tests,
+# locked dependencies — the gate every repository's CLAUDE.md asks for.
+
+on:
+  push:
+    branches: [$default-branch]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all --check
+      - run: cargo clippy --all-targets --locked -- -D warnings
+      - run: cargo test --locked

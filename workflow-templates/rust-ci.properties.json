@@ -1,0 +1,7 @@
+{
+  "name": "cyberia-to Rust CI",
+  "description": "fmt, clippy with -D warnings, and locked tests — the gate a cyberia-to Rust repository ships behind.",
+  "iconName": "rust",
+  "categories": ["Rust"],
+  "filePatterns": ["Cargo.toml"]
+}

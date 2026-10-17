@@ -1,0 +1,28 @@
+{
+  "id": "org-repo",
+  "execute-command": "/home/cyber/hooks/org-repo.sh",
+  "command-working-directory": "/home/cyber/hooks",
+  "response-message": "org-repo: relaying to cyberia-to/.github",
+  "pass-arguments-to-command": [
+    { "source": "payload", "name": "action" },
+    { "source": "payload", "name": "repository.name" }
+  ],
+  "trigger-rule": {
+    "and": [
+      {
+        "match": {
+          "type": "payload-hmac-sha256",
+          "secret": "ORG_HOOK_SECRET",
+          "parameter": { "source": "header", "name": "X-Hub-Signature-256" }
+        }
+      },
+      {
+        "match": {
+          "type": "value",
+          "value": "repository",
+          "parameter": { "source": "header", "name": "X-GitHub-Event" }
+        }
+      }
+    ]
+  }
+}

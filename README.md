@@ -218,7 +218,7 @@ the organization itself
 
 | repository | what | language | site |
 | --- | --- | --- | --- |
-| [.github](https://github.com/cyberia-to/.github) | 🏴‍☠️ org |  | [cyberia.to](https://cyberia.to) |
+| [.github](https://github.com/cyberia-to/.github) | 🏴‍☠️ org | Nushell | [cyberia.to](https://cyberia.to) |
 
 <!-- registry:end -->
 

@@ -41,7 +41,7 @@ repos = ["arc", "bt", "ren", "dif", "sym", "bel", "seq", "wav", "ten", "qu", "op
 name = "cyberia"
 line = "the state beyond the ladder: capital, membership, the presidency and the pages"
 repos = [
-  "cyberia-to", "cyberia.to", "cyberia.my", "my", "mimi", "midao", "cyberia-capital",
+  "cyberia-to", "cyberia.to", "cyberia.my", "my", "mimi", "midao", "cyberia-capital", "cyberia-meme",
   "cybland", "superhuman",
 ]
 

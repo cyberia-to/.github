@@ -83,7 +83,7 @@ what knows and connects: the soft3 stack proper
 | [eidos](https://github.com/cyberia-to/eidos) | proof assistant | Rust |  |
 | [inf](https://github.com/cyberia-to/inf) | provable graph queries | Rust |  |
 | [mudra](https://github.com/cyberia-to/mudra) | crypto magic | Rust |  |
-| [neural](https://github.com/cyberia-to/neural) |  | Rust |  |
+| [neural](https://github.com/cyberia-to/neural) | graph language | Rust |  |
 | [nu](https://github.com/cyberia-to/nu) | Nushell source for Cyb, pinned and qualified through soft3 | Rust |  |
 | [rs](https://github.com/cyberia-to/rs) | 🏍 safer, faster, field-first rust | Rust |  |
 | [rune](https://github.com/cyberia-to/rune) | dynamic language | Rust |  |
@@ -106,7 +106,7 @@ what knows and connects: the soft3 stack proper
 | --- | --- | --- | --- |
 | [foculus](https://github.com/cyberia-to/foculus) | consensus by convergence | Rust |  |
 | [radio](https://github.com/cyberia-to/radio) | communication system | Rust |  |
-| [soft3](https://github.com/cyberia-to/soft3) | type 2 civilization stack | HTML | [soft3.org](https://soft3.org) |
+| [soft3](https://github.com/cyberia-to/soft3) | type 2 civilization stack | Rust | [soft3.org](https://soft3.org) |
 | [soft3.js](https://github.com/cyberia-to/soft3.js) |  | TypeScript |  |
 | [tade](https://github.com/cyberia-to/tade) | typed annotated data exchange | Rust |  |
 
@@ -177,9 +177,9 @@ the state beyond the ladder: capital, membership, the presidency and the pages
 
 | repository | what | language | site |
 | --- | --- | --- | --- |
-| [cyberia-to](https://github.com/cyberia-to/cyberia-to) | vision and projects | Rust |  |
+| [cyberia-meme](https://github.com/cyberia-to/cyberia-meme) | cyberia.meme — the meme state. a meme is a particle. | CSS |  |
 | [cyberia.my](https://github.com/cyberia-to/cyberia.my) | what cyberia.my serves beside the SPA — published pages, synced to the docroot by cron | HTML |  |
-| [cyberia.to](https://github.com/cyberia-to/cyberia.to) | what cyberia.to serves — the page and the set, synced to the docroot by cron | HTML |  |
+| [cyberia.to](https://github.com/cyberia-to/cyberia.to) | what cyberia.to serves — the page and the set, synced to the docroot by cron | JavaScript |  |
 
 ### land
 
@@ -218,7 +218,7 @@ the organization itself
 
 | repository | what | language | site |
 | --- | --- | --- | --- |
-| [.github](https://github.com/cyberia-to/.github) | 🏴‍☠️ org |  | [cyberia.capital](https://cyberia.capital) |
+| [.github](https://github.com/cyberia-to/.github) | 🏴‍☠️ org |  | [cyberia.to](https://cyberia.to) |
 
 <!-- registry:end -->
 

@@ -78,10 +78,20 @@ def ladder-placement [ladder, groups] {
     let crate_parent = $comps | where kind != "part" | get -o part_of | compact | get -o 0
     let part_parent = $comps | where kind == "part" | get -o part_of | compact | get -o 0
     let rung = [$own_product $crate_parent $part_parent] | compact | where $it != "" | get -o 0
+    let rung = if $rung == null { null } else { rung-up $ladder $prod_names $rung }
     if $rung == null { null } else { {repo: $row.repo, rung: $rung} }
   } | compact
   let overrides = $groups.rung | transpose repo rung
   $from_ladder | append $overrides | uniq-by repo
+}
+
+# follow part_of from a component name up to the product it belongs to
+# (sigma → chroma → cy); null when the chain ends without a product
+def rung-up [ladder, prod_names, name, depth = 0] {
+  if $name in $prod_names { return $name }
+  if $depth > 8 { return null }
+  let parent = $ladder | where name == $name | get -o 0.part_of
+  if $parent == null or $parent == "" { null } else { rung-up $ladder $prod_names $parent ($depth + 1) }
 }
 
 def rung-of [placement, name] {

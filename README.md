@@ -30,7 +30,7 @@ it are overwritten within the hour.
 
 <!-- registry:start -->
 
-75 public repositories, 3 archived. Private repositories are inventoried locally with the same script: `nu registry/registry.nu render --all`.
+75 public repositories, 2 archived. Private repositories are inventoried locally with the same script: `nu registry/registry.nu render --all`.
 
 The rungs follow [soft3.org/layers](https://soft3.org/layers) and `soft3/release/components.toml`; the shelves follow `registry/groups.toml`.
 
@@ -132,7 +132,7 @@ what people use
 | --- | --- | --- | --- |
 | [bostrom](https://github.com/cyberia-to/bostrom) | 🟢 the bootloader of superintelligence | JavaScript | [bostrom.network](https://bostrom.network) |
 | [cyber](https://github.com/cyberia-to/cyber) | the 🟢 superintelligence | Nushell | [cyber.page](https://cyber.page) |
-| [space-pussy](https://github.com/cyberia-to/space-pussy) · archived, fork | Your 🟣 Pussy | TypeScript | [spacepussy.ai](https://spacepussy.ai) |
+| [space-pussy](https://github.com/cyberia-to/space-pussy) · fork | Your 🟣 Pussy | TypeScript | [spacepussy.ai](https://spacepussy.ai) |
 | [true-cyber](https://github.com/cyberia-to/true-cyber) | cyber product CLI — cargo install true-cyber → binary cyber | Rust |  |
 
 #### 10 cyberia · state

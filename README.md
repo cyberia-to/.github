@@ -30,7 +30,7 @@ it are overwritten within the hour.
 
 <!-- registry:start -->
 
-75 public repositories, 2 archived. Private repositories are inventoried locally with the same script: `nu registry/registry.nu render --all`.
+76 public repositories, 2 archived. Private repositories are inventoried locally with the same script: `nu registry/registry.nu render --all`.
 
 The rungs follow [soft3.org/layers](https://soft3.org/layers) and `soft3/release/components.toml`; the shelves follow `registry/groups.toml`.
 
@@ -144,6 +144,7 @@ what people use
 | [cyber-valley](https://github.com/cyberia-to/cyber-valley) | genesis city |  | [cybervalley.io](https://cybervalley.io) |
 | [cyberia](https://github.com/cyberia-to/cyberia) | the cyberstate | Python | [cyberia.to](https://cyberia.to) |
 | [cyberia-my](https://github.com/cyberia-to/cyberia-my) | cyberstate interface | Rust |  |
+| [cybernode](https://github.com/cyberia-to/cybernode) | cybernode — rung 7 of the soft3 ladder: the node. one binary, many network instances | Rust |  |
 | [cyberstates](https://github.com/cyberia-to/cyberstates) | sovereignty terminal | Rust | [cyberstates.net](https://cyberstates.net) |
 
 ### warriors

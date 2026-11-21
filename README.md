@@ -30,7 +30,7 @@ it are overwritten within the hour.
 
 <!-- registry:start -->
 
-76 public repositories, 2 archived. Private repositories are inventoried locally with the same script: `nu registry/registry.nu render --all`.
+76 public repositories, 3 archived. Private repositories are inventoried locally with the same script: `nu registry/registry.nu render --all`.
 
 The rungs follow [soft3.org/layers](https://soft3.org/layers) and `soft3/release/components.toml`; the shelves follow `registry/groups.toml`.
 
@@ -107,7 +107,7 @@ what knows and connects: the soft3 stack proper
 | [foculus](https://github.com/cyberia-to/foculus) | consensus by convergence | Rust |  |
 | [radio](https://github.com/cyberia-to/radio) | communication system | Rust |  |
 | [soft3](https://github.com/cyberia-to/soft3) | type 2 civilization stack | Rust | [soft3.org](https://soft3.org) |
-| [soft3.js](https://github.com/cyberia-to/soft3.js) |  | TypeScript |  |
+| [soft3.js](https://github.com/cyberia-to/soft3.js) · archived |  | TypeScript |  |
 | [tade](https://github.com/cyberia-to/tade) | typed annotated data exchange | Rust |  |
 
 ### apps

@@ -30,7 +30,7 @@ it are overwritten within the hour.
 
 <!-- registry:start -->
 
-76 public repositories, 3 archived. Private repositories are inventoried locally with the same script: `nu registry/registry.nu render --all`.
+77 public repositories, 3 archived. Private repositories are inventoried locally with the same script: `nu registry/registry.nu render --all`.
 
 The rungs follow [soft3.org/layers](https://soft3.org/layers) and `soft3/release/components.toml`; the shelves follow `registry/groups.toml`.
 
@@ -130,9 +130,7 @@ what people use
 
 | repository | what | language | site |
 | --- | --- | --- | --- |
-| [bostrom](https://github.com/cyberia-to/bostrom) | 🟢 the bootloader of superintelligence | JavaScript | [bostrom.network](https://bostrom.network) |
 | [cyber](https://github.com/cyberia-to/cyber) | the 🟢 superintelligence | Nushell | [cyber.page](https://cyber.page) |
-| [space-pussy](https://github.com/cyberia-to/space-pussy) · fork | Your 🟣 Pussy | JavaScript | [spacepussy.ai](https://spacepussy.ai) |
 | [true-cyber](https://github.com/cyberia-to/true-cyber) | cyber product CLI — cargo install true-cyber → binary cyber | Rust |  |
 
 #### 10 cyberia · state
@@ -220,6 +218,16 @@ the organization itself
 | repository | what | language | site |
 | --- | --- | --- | --- |
 | [.github](https://github.com/cyberia-to/.github) | 🏴‍☠️ org | Nushell | [cyberia.to](https://cyberia.to) |
+
+### unsorted
+
+repositories the registry has not placed yet: add them to registry/groups.toml or to the ladder
+
+| repository | what | language | site |
+| --- | --- | --- | --- |
+| [.BOOT](https://github.com/cyberia-to/.BOOT) | 🟢 the bootloader of superintelligence | JavaScript | [bostrom.network](https://bostrom.network) |
+| [.CYB](https://github.com/cyberia-to/.CYB) | 🔵 CYB: the root money of cyber | HTML | [cyb.money](https://cyb.money) |
+| [.PUSSY](https://github.com/cyberia-to/.PUSSY) · fork | Your 🟣 Pussy | JavaScript | [spacepussy.ai](https://spacepussy.ai) |
 
 <!-- registry:end -->
 

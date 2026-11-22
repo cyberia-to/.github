@@ -132,7 +132,7 @@ what people use
 | --- | --- | --- | --- |
 | [bostrom](https://github.com/cyberia-to/bostrom) | 🟢 the bootloader of superintelligence | JavaScript | [bostrom.network](https://bostrom.network) |
 | [cyber](https://github.com/cyberia-to/cyber) | the 🟢 superintelligence | Nushell | [cyber.page](https://cyber.page) |
-| [space-pussy](https://github.com/cyberia-to/space-pussy) · fork | Your 🟣 Pussy | TypeScript | [spacepussy.ai](https://spacepussy.ai) |
+| [space-pussy](https://github.com/cyberia-to/space-pussy) · fork | Your 🟣 Pussy | JavaScript | [spacepussy.ai](https://spacepussy.ai) |
 | [true-cyber](https://github.com/cyberia-to/true-cyber) | cyber product CLI — cargo install true-cyber → binary cyber | Rust |  |
 
 #### 10 cyberia · state
